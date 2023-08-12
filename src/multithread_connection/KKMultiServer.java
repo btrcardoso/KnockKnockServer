@@ -14,6 +14,8 @@ public class KKMultiServer {
 		){
 			
 			while(true) {
+				// recebe como parâmetro o kkServerSocket.accept() que é o Socket, a conexão do cliente.
+				// o .start() é um método da classe Thread, que inicializa a Thread
 				new KKMultiServerThread(kkServerSocket.accept()).start();				
 			}
 			
