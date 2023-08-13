@@ -6,11 +6,11 @@ import java.util.ArrayList;
 
 public class KKMultiServer {
 	
-	private static ArrayList<Socket> audience = new ArrayList<Socket>();
-	private static final int MAX_CAPACITY = 3;
+	private static ArrayList<KKMultiServerThread> audience = new ArrayList<KKMultiServerThread>();
+	private static final int MAX_CAPACITY = 1;
 	
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
 		
 		int portNumber = 3322;
 		
@@ -19,25 +19,30 @@ public class KKMultiServer {
 		){
 			
 			while(true) {
-				
-				for(Socket clientConnection : audience) {
-					if(clientConnection.isClosed()) {
-						audience.remove(clientConnection);
-					}
-				}
-				
+								
 				if(audience.size() != MAX_CAPACITY) {
 					
 					// a conexão do cliente.
 					Socket client = kkServerSocket.accept();
-					audience.add(client);
-					printAllClientsInfo();
 								
 					// o .start() é um método da classe Thread, que inicializa a Thread
-					new KKMultiServerThread(client).start();	
+					KKMultiServerThread thread = new KKMultiServerThread(client);	
+					thread.start();
+					
+					audience.add(thread);
+					printAllClientsInfo();
 					
 				} else {
-					//System.out.println("Cliente à espera");
+					
+		            Thread.sleep(3000); //pausa por 3 segundos
+		            
+					for(KKMultiServerThread clientThread : audience) {
+						System.out.println(clientThread.getState());
+						if(!clientThread.isAlive()) {
+							// esta linha dá problema, pois estamos alterando a lista enquanto percorremos por ela
+							audience.remove(clientThread);
+						}
+					}
 				}
 				
 							
@@ -53,8 +58,8 @@ public class KKMultiServer {
 	}
 	
 	public static void printAllClientsInfo() {
-		for(Socket client : audience) {
-			System.out.println("Cliente: "+ client.getRemoteSocketAddress());
+		for(KKMultiServerThread client : audience) {
+			System.out.println("Cliente: "+ client.getClientSocket().getRemoteSocketAddress());
 		}
 		System.out.println("");
 	}
