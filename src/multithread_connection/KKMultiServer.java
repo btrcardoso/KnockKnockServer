@@ -2,8 +2,13 @@ package multithread_connection;
 
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 
 public class KKMultiServer {
+	
+	private static ArrayList<Socket> audience = new ArrayList<Socket>();
+	private static final int MAX_CAPACITY = 3;
+	
 	
 	public static void main(String[] args) {
 		
@@ -12,20 +17,30 @@ public class KKMultiServer {
 		try(
 			ServerSocket kkServerSocket = new ServerSocket(portNumber);
 		){
-			int audience = 0;
+			
 			while(true) {
-				// a conexão do cliente.
-				Socket client = kkServerSocket.accept();
 				
-				audience ++;
+				for(Socket clientConnection : audience) {
+					if(clientConnection.isClosed()) {
+						audience.remove(clientConnection);
+					}
+				}
 				
-				System.out.println("\nNovo cliente" 
-					+ "\nRemote Socket Address: " + client.getRemoteSocketAddress()
-					+ "\nInet Address: " + client.getInetAddress()
-					+ "\nNúmero de clientes que já conectaram: " + audience
-				);
-				// o .start() é um método da classe Thread, que inicializa a Thread
-				new KKMultiServerThread(client).start();				
+				if(audience.size() != MAX_CAPACITY) {
+					
+					// a conexão do cliente.
+					Socket client = kkServerSocket.accept();
+					audience.add(client);
+					printAllClientsInfo();
+								
+					// o .start() é um método da classe Thread, que inicializa a Thread
+					new KKMultiServerThread(client).start();	
+					
+				} else {
+					//System.out.println("Cliente à espera");
+				}
+				
+							
 			}
 			
 		} catch (IOException e) {
@@ -35,6 +50,20 @@ public class KKMultiServer {
 		
 		
 		
+	}
+	
+	public static void printAllClientsInfo() {
+		for(Socket client : audience) {
+			System.out.println("Cliente: "+ client.getRemoteSocketAddress());
+		}
+		System.out.println("");
+	}
+	
+	public static void printClientInfo(Socket client) {
+		System.out.println("\nCliente" 
+				+ "\nRemote Socket Address: " + client.getRemoteSocketAddress()
+				+ "\nInet Address: " + client.getInetAddress()
+			);
 	}
 
 }

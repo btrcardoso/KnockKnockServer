@@ -21,6 +21,10 @@ public class KKMultiServerThread extends Thread {
 		
 	}
 	
+	public Socket getClientSocket() {
+		return clientSocket;
+	}
+	
 	public void run() {
 		
 		try(
