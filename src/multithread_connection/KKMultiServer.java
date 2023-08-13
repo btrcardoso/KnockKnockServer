@@ -1,7 +1,7 @@
 package multithread_connection;
 
-import java.io.IOException;
-import java.net.ServerSocket;
+import java.io.*;
+import java.net.*;
 
 public class KKMultiServer {
 	
@@ -12,11 +12,20 @@ public class KKMultiServer {
 		try(
 			ServerSocket kkServerSocket = new ServerSocket(portNumber);
 		){
-			
+			int audience = 0;
 			while(true) {
-				// recebe como parâmetro o kkServerSocket.accept() que é o Socket, a conexão do cliente.
+				// a conexão do cliente.
+				Socket client = kkServerSocket.accept();
+				
+				audience ++;
+				
+				System.out.println("\nNovo cliente" 
+					+ "\nRemote Socket Address: " + client.getRemoteSocketAddress()
+					+ "\nInet Address: " + client.getInetAddress()
+					+ "\nNúmero de clientes que já conectaram: " + audience
+				);
 				// o .start() é um método da classe Thread, que inicializa a Thread
-				new KKMultiServerThread(kkServerSocket.accept()).start();				
+				new KKMultiServerThread(client).start();				
 			}
 			
 		} catch (IOException e) {

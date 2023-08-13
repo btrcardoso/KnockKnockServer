@@ -12,10 +12,10 @@ public class KnockKnockProtocol {
 	private int state = WAITING;
 	private int currentJoke = 0;
 	
-	private String[] clues = {"Noe", "Dem", "Ve"};
-	private String[] answers = {"Noe da sua conta!", 
+	private String[] clues = {"Noé", "Dem", "Vê"};
+	private String[] answers = {"Noé da sua conta!", 
 								"Demorou pra responder e eu esqueci a piada!",
-								"Ve pelo olho magico e descobre!"};
+								"Vê pelo olho mágico e descobre!"};
 	
 	public String processInput(String clientInput) {
 		
@@ -28,14 +28,14 @@ public class KnockKnockProtocol {
 			
 		} else if(state == SENTKNOCKKNOCK) {
 			
-			if(clientInput.equalsIgnoreCase("quem e?")) {
+			if(clientInput.equalsIgnoreCase("quem é?")) {
 				
 				output = clues[currentJoke];
 				state = SENTCLUE;
 				
 			} else {
 				
-				output = "Voce deveria dizer 'quem e?'. Tente novamente. \r\nServer: Knock! Knock!";
+				output = "Voce deveria dizer 'quem é?'. Tente novamente. \r\nServer: Knock! Knock!";
 				
 			}
 			
