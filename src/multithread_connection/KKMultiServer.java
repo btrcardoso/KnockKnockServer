@@ -3,6 +3,7 @@ package multithread_connection;
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class KKMultiServer {
 	
@@ -25,7 +26,7 @@ public class KKMultiServer {
 					// a conexão do cliente.
 					Socket client = kkServerSocket.accept();
 								
-					// o .start() é um método da classe Thread, que inicializa a Thread
+					// o .start() é um método da classe Thread, que inicializa a Thread do cliente
 					KKMultiServerThread thread = new KKMultiServerThread(client);	
 					thread.start();
 					
@@ -34,15 +35,19 @@ public class KKMultiServer {
 					
 				} else {
 					
-		            Thread.sleep(3000); //pausa por 3 segundos
+					// pausa por 3 segundos para verificar disponibilidade do servidor
+		            Thread.sleep(3000); 
 		            
-					for(KKMultiServerThread clientThread : audience) {
-						System.out.println(clientThread.getState());
+		            // busca por clientes que já finalizaram para retirá-los da audiência
+		            Iterator<KKMultiServerThread> it = audience.iterator();
+		            while(it.hasNext()) {
+		            	KKMultiServerThread clientThread = it.next(); 
+		            	System.out.println(clientThread.getState());
 						if(!clientThread.isAlive()) {
-							// esta linha dá problema, pois estamos alterando a lista enquanto percorremos por ela
-							audience.remove(clientThread);
+							it.remove();
 						}
-					}
+		            }
+		            
 				}
 				
 							
