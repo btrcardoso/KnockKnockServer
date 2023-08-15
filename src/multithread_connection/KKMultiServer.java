@@ -5,6 +5,8 @@ import java.net.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import protocol.KnockKnockProtocol;
+
 public class KKMultiServer {
 	
 	private static ArrayList<KKMultiServerThread> audience = new ArrayList<KKMultiServerThread>();
@@ -13,7 +15,7 @@ public class KKMultiServer {
 	
 	public static void main(String[] args) throws InterruptedException {
 		
-		int portNumber = 3322;
+		int portNumber = 3323;
 		
 		try(
 			ServerSocket kkServerSocket = new ServerSocket(portNumber);
@@ -21,7 +23,9 @@ public class KKMultiServer {
 			
 			while(true) {
 								
-				if(audience.size() != MAX_CAPACITY) {
+				if(audience.size() <= MAX_CAPACITY) {
+					
+					KnockKnockProtocol.clientsWaitingServer = false;
 					
 					// a conexão do cliente.
 					Socket client = kkServerSocket.accept();
@@ -35,6 +39,8 @@ public class KKMultiServer {
 					
 				} else {
 					
+		            KnockKnockProtocol.clientsWaitingServer = true;
+					
 					// pausa por 3 segundos para verificar disponibilidade do servidor
 		            Thread.sleep(3000); 
 		            
@@ -47,6 +53,7 @@ public class KKMultiServer {
 							it.remove();
 						}
 		            }
+		        
 		            
 				}
 				

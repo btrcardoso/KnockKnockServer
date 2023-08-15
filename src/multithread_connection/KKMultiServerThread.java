@@ -51,7 +51,7 @@ public class KKMultiServerThread extends Thread {
 				serverMsg = protocol.processInput(clientMsg);
 				out.println("Server: " + serverMsg);
 				
-				if(serverMsg.equalsIgnoreCase("Tchau.")) {
+				if(protocol.getState() == 4) {
 					break;
 				}
 			}

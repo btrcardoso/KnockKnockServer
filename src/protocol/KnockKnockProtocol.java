@@ -6,8 +6,11 @@ public class KnockKnockProtocol {
 	private static final int SENTKNOCKKNOCK = 1;
 	private static final int SENTCLUE = 2;
 	private static final int ANOTHER = 3;
+	private static final int END = 4;
 	
-	private static final int NUMJOKES = 3;
+	private static final int NUMJOKES = 1;
+	
+	public static boolean clientsWaitingServer = false;
 	
 	private int state = WAITING;
 	private int currentJoke = 0;
@@ -16,6 +19,10 @@ public class KnockKnockProtocol {
 	private String[] answers = {"Noé da sua conta!", 
 								"Demorou pra responder e eu esqueci a piada!",
 								"Vê pelo olho mágico e descobre!"};
+	
+	public int getState() {
+		return state;
+	}
 	
 	public String processInput(String clientInput) {
 		
@@ -43,8 +50,14 @@ public class KnockKnockProtocol {
 			
 			if(clientInput.equalsIgnoreCase(clues[currentJoke] + " quem?")) {
 				
-				output = answers[currentJoke] + ". \r\nServer: Quer outra piada? (s/n) ";
-				state = ANOTHER;
+				
+				if(clientsWaitingServer && currentJoke == NUMJOKES - 1) {
+					output = answers[currentJoke] + ". \r\nNossa fila de espectadores está cheia, por isso, chega de piadas por agora! Se quiser ouvir mais, acesse o servidor novamente e aguarde na fila.";
+					state = END;
+				} else {
+					output = answers[currentJoke] + ". \r\nServer: Quer outra piada? (s/n) ";
+					state = ANOTHER;
+				}
 				
 			} else {
 				
@@ -64,7 +77,7 @@ public class KnockKnockProtocol {
 			} else {
 				
 				output = "Tchau.";
-				state = WAITING;
+				state = END;
 				
 			}
 			
