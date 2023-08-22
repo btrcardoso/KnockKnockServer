@@ -30,7 +30,7 @@ public class KnockKnockProtocol {
 		
 		if(state == WAITING) {
 			
-			output = "Knock! Knock! á";
+			output = "Knock! Knock!";
 			state = SENTKNOCKKNOCK;
 			
 		} else if(state == SENTKNOCKKNOCK) {

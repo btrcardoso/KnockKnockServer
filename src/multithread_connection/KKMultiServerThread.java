@@ -7,6 +7,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
+import java.util.concurrent.TimeoutException;
 
 import protocol.KnockKnockProtocol;
 
@@ -46,14 +48,38 @@ public class KKMultiServerThread extends Thread {
 			out.println("Server: " + serverMsg);
 				
 			String clientMsg;
+			int countInactivity = 0;
 				
-			while((clientMsg = in.readLine()) != null) {
-				serverMsg = protocol.processInput(clientMsg);
-				out.println("Server: " + serverMsg);
+			while(true) {
 				
-				if(protocol.getState() == 4) {
-					break;
+				clientSocket.setSoTimeout(5000);
+				
+				try {
+					clientMsg = in.readLine();
+					countInactivity = 0;
+					
+					if(clientMsg != null) {
+						
+						serverMsg = protocol.processInput(clientMsg);
+						out.println("Server: " + serverMsg);
+						
+						if(protocol.getState() == 4) {
+							break;
+						}
+						
+					} 
+					
+				} catch(SocketTimeoutException e) {
+					
+					if(countInactivity > 3) {
+				    	out.println("Como você não quer ouvir minhas piadas, vou fechar a conexão. Tchau.");
+				    	clientSocket.close();
+				    }
+					
+				    out.println("Você ainda está aí?");
+				    countInactivity += 1;
 				}
+				
 			}
 			
 			clientSocket.close();
