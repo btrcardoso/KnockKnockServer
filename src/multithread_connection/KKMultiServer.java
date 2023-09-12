@@ -83,4 +83,9 @@ public class KKMultiServer {
 			);
 	}
 
+	public static void leaveTeather(Socket client) throws IOException{
+		client.close();
+	}
+
+
 }
